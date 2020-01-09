@@ -70,10 +70,36 @@ const addUser = function (user) {
     .catch(err => console.error('user not added :', err));
 };
 
+
+// get all the reservation of login user
+const getAllReservations = function (guest_id, limit = 10) {
+  return pool.query(`
+  SELECT * FROM reservations
+  JOIN property_reviews ON reservation_id = reservations.id
+  JOIN users ON users.id = property_reviews.guest_id
+  WHERE property_reviews.guest_id = $1
+  LIMIT $2;
+  `, [guest_id, limit])
+    .then(res => {
+      if (res.rows.length) {
+        return res.rows[0];
+      } else {
+        return null;
+      }
+    })
+    .catch(err => console.error('user not added :', err));
+};
+
+exports.getAllReservations = getAllReservations;
 exports.getAllProperties = getAllProperties;
 exports.getUserWithEmail = getUserWithEmail;
 exports.addUser = addUser;
 exports.getUserWithId = getUserWithId;
+
+
+
+
+
 // const limit = 10;
 
 // const query = `SELECT *
